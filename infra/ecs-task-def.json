@@ -1,0 +1,39 @@
+
+{
+  "family": "enterprise-ai-operations-agent",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/enterprise-ai-agent-task-role",
+  "containerDefinitions": [
+    {
+      "name": "ai-operations-agent",
+      "image": "ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/enterprise-ai-agent:latest",
+      "essential": true,
+      "portMappings": [],
+      "environment": [
+        { "name": "ENV", "value": "production" }
+      ],
+      "secrets": [
+        {
+          "name": "OPENAI_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:openai"
+        },
+        {
+          "name": "ANTHROPIC_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:anthropic"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/enterprise-ai-operations-agent",
+          "awslogs-region": "REGION",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
