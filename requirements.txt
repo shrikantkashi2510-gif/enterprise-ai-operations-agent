@@ -1,0 +1,5 @@
+crewai
+openai
+langfuse
+psycopg2-binary
+python-dotenv
