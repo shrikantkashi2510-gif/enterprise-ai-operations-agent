@@ -5,6 +5,20 @@
 
 A production-oriented AI Operations Agent designed for enterprise environments, focusing on reliability, cost control, evaluation, and human-in-the-loop safeguards rather than autonomous behavior or UI features.
 
+## Who This Is For
+
+This project is designed for:
+- Engineering leaders deploying LLM systems in production
+- Teams responsible for AI reliability, evaluation, and governance
+- Organizations operating under cost, compliance, or audit constraints
+
+## When to Use This
+
+Use this system when:
+- LLM workflows must be governed, evaluated, and routed safely
+- Cost, latency, and failure modes need active control
+- Human-in-the-loop oversight is required for high-risk decisions
+
 
 ---
 
