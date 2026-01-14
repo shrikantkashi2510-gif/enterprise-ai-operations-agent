@@ -19,6 +19,7 @@ Use this system when:
 - Cost, latency, and failure modes need active control
 - Human-in-the-loop oversight is required for high-risk decisions
 
+  > This repository reflects real-world architectural patterns used when operating LLM systems beyond prototype stage.
 
 ---
 
