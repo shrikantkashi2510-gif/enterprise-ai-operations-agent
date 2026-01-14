@@ -1,11 +1,10 @@
 
 # Enterprise AI Operations Agent (v1)
 
-A production-oriented AI Operations Agent for governing, evaluating, and
-routing LLM-based workflows in enterprise environments.
+> Production-grade AI operations agent for governing, evaluating, and routing LLM workflows with built-in reliability, cost, and failure controls.
 
-This project focuses on reliability, cost control, evaluation, and
-human-in-the-loop safeguards rather than autonomous behavior or UI features.
+A production-oriented AI Operations Agent designed for enterprise environments, focusing on reliability, cost control, evaluation, and human-in-the-loop safeguards rather than autonomous behavior or UI features.
+
 
 ---
 
