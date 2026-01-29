@@ -173,14 +173,32 @@ graph TD
 
 ## Reliability & Governance
 
-🛡️ Deterministic Governance & Anti-Hallucination
-This system replaces "vibe-checking" with Deterministic Guardrails:
+## 🛡️ Reliability & Hallucination Prevention
 
-Pydantic Validation: Every agent output is validated against a strict schema. If the LLM returns malformed data, the Orchestrator forces a retry.
+In a production environment, "vibe-checking" is not a strategy. This system treats AI reliability as a core engineering constraint, implementing a **Multi-Layer Deterministic Safety Protocol** to eliminate hallucinations and ensure grounded responses.
 
-Context Bounding: The Retrieval Agent is restricted to specific pgvector namespaces to prevent the model from "wandering" into irrelevant data.
+### **1. Retrieval Bounding (The "Box" Strategy)**
+To prevent the LLM from "imagining" facts, we use **Restricted Context Injection**:
+* **Vector-Only Grounding:** The Retrieval Agent is strictly prohibited from using its internal training data for factual claims. It must cite specific metadata IDs from our `pgvector` store.
+* **Threshold Filtering:** We implement a cosine similarity floor. If no document meets a 0.82 relevance score, the system triggers an "Insufficient Knowledge" exception rather than attempting a guess.
 
-The 0.85 Confidence Rule: The Evaluation Agent uses a customized rubric to score groundedness. Any response scoring below 0.85 is automatically routed to a Human-in-the-Loop (Slack) rather than being sent to the customer.
+### **2. Structural Integrity (Pydantic V2 Guardrails)**
+We eliminate "Prose Hallucinations" (where the AI ignores instructions) by enforcing strict schema validation:
+* **Deterministic Output:** Every agent response is parsed through a Pydantic model. If the JSON structure is invalid or missing required fields (e.g., `confidence_score`, `source_citations`), the Orchestrator executes a recursive self-correction loop.
+* **Type Safety:** We enforce strict data types for all tool arguments to prevent the model from hallucinating non-existent API parameters.
+
+### **3. The "Conscience" Layer (Dual-Agent Evaluation)**
+Before any action is executed, the **Evaluation Agent** performs a "Groundedness Audit":
+* **NLI (Natural Language Inference):** The system checks if the proposed response is logically entailed by the retrieved context.
+* **Confidence Scoring:** We use a customized rubric to score the response. 
+    * **Score > 0.85:** Automated Execution.
+    * **Score 0.70 - 0.85:** Routed for secondary verification.
+    * **Score < 0.70:** Immediate escalation to the **Human-in-the-Loop (HITL)** via Slack.
+
+### **4. Cost & Latency Governance**
+Reliability also means fiscal predictability.
+* **Model Routing:** We use a "Small-to-Large" routing logic. Low-risk tasks are handled by faster, cost-effective models (e.g., Claude Haiku), while high-stakes reasoning is reserved for frontier models (e.g., GPT-4o), ensuring we hit ROI targets without compromising quality.
+* **Observability:** Every decision is traced via **Langfuse**, providing a full audit trail of the "Chain of Thought" for compliance and post-mortem analysis.
 ---
 
 ## Deployment Model
