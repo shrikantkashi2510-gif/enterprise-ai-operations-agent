@@ -1,23 +1,24 @@
 
 # Enterprise AI Operations Agent  
-### An internal AI copilot that removes operational bottlenecks and replaces people-dependent workflows
+## An internal AI copilot that removes operational bottlenecks and replaces people-dependent workflows
 
 This system is designed for founders and leadership teams who are scaling AI-powered workflows and need reliability, control, and decision velocity — without adding operational complexity or headcount.
 
-🛠️ The Tech Stack
-Orchestration: n8n (Production-grade workflow automation)
+# 🛠️ The Tech Stack
 
-LLM Framework: CrewAI (Multi-agent orchestration)
+## Orchestration: n8n (Production-grade workflow automation)
 
-Backend: Python 3.12 (Pydantic V2 for strict type safety)
+## LLM Framework: CrewAI (Multi-agent orchestration)
 
-Infrastructure: AWS ECS Fargate, Secrets Manager, IAM (Least-Privilege)
+## Backend: Python 3.12 (Pydantic V2 for strict type safety)
 
-Vector Store: PostgreSQL + pgvector for bounded context retrieval
+## Infrastructure: AWS ECS Fargate, Secrets Manager, IAM (Least-Privilege)
 
-Observability: Langfuse (Traceability, Latency, and Cost tracking)
+## Vector Store: PostgreSQL + pgvector for bounded context retrieval
 
-## The Business Problem This Solves
+## Observability: Langfuse (Traceability, Latency, and Cost tracking)
+
+# The Business Problem This Solves
 
 As companies scale, operational knowledge fragments across tools, documents, and people.
 
@@ -107,14 +108,14 @@ This ensures AI assistance improves efficiency **without introducing uncontrolle
 
 ## Architecture Overview
 
-**Core Components**
+### **Core Components**
 - Workflow orchestration: n8n
 - Agent framework: CrewAI
 - Runtime: AWS ECS (Fargate)
 - Storage: PostgreSQL + pgvector, S3
 - Observability: Langfuse, CloudWatch
 - Notifications: Slack
-
+```
 graph LR
     subgraph "External Triggers"
         Webhook[n8n Webhook]
@@ -150,35 +151,36 @@ graph LR
 Detailed architecture decisions are documented in:
 - `ARCHITECTURE.md`
 - `DECISIONS.md`
+```
 
 ---
 
 ## Agent Responsibilities
 
-- **Orchestrator Agent**  
+### - **Orchestrator Agent**  
   Controls execution flow and enforces policies
 
-- **Retrieval Agent**  
+### - **Retrieval Agent**  
   Fetches and bounds relevant context
 
-- **Evaluation Agent**  
+### - **Evaluation Agent**  
   Scores responses and determines approval or escalation
 
-- **Action Agent**  
+### - **Action Agent**  
   Executes approved actions only
 
 ---
 
 ## Reliability & Governance
 
-🛡️ Deterministic Governance & Anti-Hallucination
+### 🛡️ Deterministic Governance & Anti-Hallucination
 This system replaces "vibe-checking" with Deterministic Guardrails:
 
-Pydantic Validation: Every agent output is validated against a strict schema. If the LLM returns malformed data, the Orchestrator forces a retry.
+### Pydantic Validation: Every agent output is validated against a strict schema. If the LLM returns malformed data, the Orchestrator forces a retry.
 
-Context Bounding: The Retrieval Agent is restricted to specific pgvector namespaces to prevent the model from "wandering" into irrelevant data.
+### Context Bounding: The Retrieval Agent is restricted to specific pgvector namespaces to prevent the model from "wandering" into irrelevant data.
 
-The 0.85 Confidence Rule: The Evaluation Agent uses a customized rubric to score groundedness. Any response scoring below 0.85 is automatically routed to a Human-in-the-Loop (Slack) rather than being sent to the customer.
+### The 0.85 Confidence Rule: The Evaluation Agent uses a customized rubric to score groundedness. Any response scoring below 0.85 is automatically routed to a Human-in-the-Loop (Slack) rather than being sent to the customer.
 ---
 
 ## Deployment Model
@@ -196,13 +198,13 @@ This deployment model reflects real-world production environments used by scalin
 
 ## Project Status
 
-Status: 🚀 Production-Ready (v1.0)
+### Status: 🚀 Production-Ready (v1.0)
 
-CI/CD: GitHub Actions enabled for automated testing.
+### CI/CD: GitHub Actions enabled for automated testing.
 
-Security: PII-scrubbing middleware included in the Retrieval Layer.
+### Security: PII-scrubbing middleware included in the Retrieval Layer.
 
-Scalability: Stateless architecture ready for AWS Fargate horizontal scaling.
+### Scalability: Stateless architecture ready for AWS Fargate horizontal scaling.
 
 ---
 
