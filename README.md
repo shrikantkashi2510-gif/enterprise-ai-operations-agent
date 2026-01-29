@@ -4,6 +4,19 @@
 
 This system is designed for founders and leadership teams who are scaling AI-powered workflows and need reliability, control, and decision velocity — without adding operational complexity or headcount.
 
+🛠️ The Tech Stack
+Orchestration: n8n (Production-grade workflow automation)
+
+LLM Framework: CrewAI (Multi-agent orchestration)
+
+Backend: Python 3.12 (Pydantic V2 for strict type safety)
+
+Infrastructure: AWS ECS Fargate, Secrets Manager, IAM (Least-Privilege)
+
+Vector Store: PostgreSQL + pgvector for bounded context retrieval
+
+Observability: Langfuse (Traceability, Latency, and Cost tracking)
+
 ## The Business Problem This Solves
 
 As companies scale, operational knowledge fragments across tools, documents, and people.
@@ -102,6 +115,38 @@ This ensures AI assistance improves efficiency **without introducing uncontrolle
 - Observability: Langfuse, CloudWatch
 - Notifications: Slack
 
+graph LR
+    subgraph "External Triggers"
+        Webhook[n8n Webhook]
+        Slack[Slack Event]
+    end
+
+    subgraph "The Control Plane (AWS Fargate)"
+        Orc["🧠 Orchestrator Agent"]
+        Eval["⚖️ Evaluation Agent"]
+        Auth{Policy Check}
+    end
+
+    subgraph "The Action Layer"
+        Ret["🔍 Retrieval Agent"]
+        Action["🛠️ Action Agent"]
+    end
+
+    subgraph "Storage & Monitoring"
+        DB[(PostgreSQL / pgvector)]
+        Obs[Langfuse Observability]
+    end
+
+    %% Flow
+    Webhook --> Orc
+    Orc --> Auth
+    Auth -->|Approved| Ret
+    Ret --> DB
+    DB --> Orc
+    Orc --> Eval
+    Eval -->|Confidence > 0.85| Action
+    Eval -->|Low Confidence| Slack
+    Action --> Obs
 Detailed architecture decisions are documented in:
 - `ARCHITECTURE.md`
 - `DECISIONS.md`
@@ -126,14 +171,14 @@ Detailed architecture decisions are documented in:
 
 ## Reliability & Governance
 
-AI reliability is treated as a first-class business requirement, not an afterthought.
-This system treats AI reliability as a first-class concern.
+🛡️ Deterministic Governance & Anti-Hallucination
+This system replaces "vibe-checking" with Deterministic Guardrails:
 
-Key governance artifacts:
-- Failure handling: `FAILURE_MODES.md`
-- Cost controls: `COST_MODEL.md`
-- Evaluation logic: `EVAL_STRATEGY.md`
+Pydantic Validation: Every agent output is validated against a strict schema. If the LLM returns malformed data, the Orchestrator forces a retry.
 
+Context Bounding: The Retrieval Agent is restricted to specific pgvector namespaces to prevent the model from "wandering" into irrelevant data.
+
+The 0.85 Confidence Rule: The Evaluation Agent uses a customized rubric to score groundedness. Any response scoring below 0.85 is automatically routed to a Human-in-the-Loop (Slack) rather than being sent to the customer.
 ---
 
 ## Deployment Model
@@ -147,19 +192,17 @@ Infrastructure definitions are located in `infra/`.
 
 This deployment model reflects real-world production environments used by scaling teams.
 
-
 ---
 
 ## Project Status
 
-**Version:** v1 (Foundational)
+Status: 🚀 Production-Ready (v1.0)
 
-This version prioritizes:
-- Clear architectural boundaries
-- Safe execution paths
-- Observability and auditability
+CI/CD: GitHub Actions enabled for automated testing.
 
-Future iterations may extend capabilities without changing core principles.
+Security: PII-scrubbing middleware included in the Retrieval Layer.
+
+Scalability: Stateless architecture ready for AWS Fargate horizontal scaling.
 
 ---
 
@@ -170,8 +213,4 @@ build and operate AI systems in production environments.
 
 It favors correctness, governance, and clarity over novelty.
 
----
 
-## License
-
-This project is provided for demonstration and educational purposes.
